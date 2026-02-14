@@ -37,6 +37,12 @@ yarn-error.log
 testem.log
 /typings
 
-# System files
-.DS_Store
-Thumbs.db
+# Additional Angular specific
+out-tsc
+
+# Additional System files
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
