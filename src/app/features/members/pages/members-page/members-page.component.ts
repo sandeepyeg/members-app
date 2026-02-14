@@ -4,23 +4,25 @@ import { MemberService } from '../../services/member.service';
 import { MemberDetailsComponent } from '../../components/member-details/member-details.component';
 import { MembersListComponent } from '../../components/members-list/members-list.component';
 import { SharedModule } from '../../../../shared/shared.module';
+import { MemberFormComponent } from '../../components/member-form/member-form.component';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-members-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MembersListComponent, MemberDetailsComponent, SharedModule],
+  imports: [MembersListComponent, MemberDetailsComponent, SharedModule, MemberFormComponent],
   templateUrl: './members-page.component.html',
   styleUrl: './members-page.component.scss'
 })
 export class MembersPageComponent implements OnInit {
 
   selectedMember?: Member;
-
+  showAddModal = signal(false);
   members = signal<Member[]>([]);
   searchTerm = signal('');
 
-  constructor(private memberService: MemberService) { }
+  constructor(private memberService: MemberService, private toastService: ToastService) { }
 
   ngOnInit(): void {
     this.loadMembers();
@@ -36,9 +38,10 @@ export class MembersPageComponent implements OnInit {
   }
 
   onSaved(member: Member) {
-    this.selectedMember = member;
-    this.memberService.updateMember(member).subscribe(() => {
+    this.memberService.createMember(member).subscribe(() => {
+      this.showAddModal.set(false);
       this.loadMembers();
+      this.toastService.show('Member added successfully!', 'success');
     });
   }
 
