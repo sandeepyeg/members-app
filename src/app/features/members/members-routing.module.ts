@@ -1,12 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MembersPageComponent } from './pages/members-page/members-page.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    loadComponent: () =>
-      import('./components/members-list/members-list.component').then(m => m.MembersListComponent)
-  },
+  { path: '', component: MembersPageComponent },
   {
     path: ':id',
     loadComponent: () =>

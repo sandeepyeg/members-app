@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, computed } from '@angular/core';
 import { Member } from '../../models/member.model';
 import { MemberService } from '../../services/member.service';
 import { MemberDetailsComponent } from '../../components/member-details/member-details.component';
@@ -16,13 +16,9 @@ import { SharedModule } from '../../../../shared/shared.module';
 export class MembersPageComponent implements OnInit {
 
   selectedMember?: Member;
-  members: Member[] = [];
 
-  searchTerm = '';
-
-  private lastFilter = '';
-  private lastMembers: Member[] = [];
-  private cachedFiltered: Member[] = [];
+  members = signal<Member[]>([]);
+  searchTerm = signal('');
 
   constructor(private memberService: MemberService) { }
 
@@ -36,7 +32,7 @@ export class MembersPageComponent implements OnInit {
 
   loadMembers(): void {
     this.memberService.getMembers()
-      .subscribe(m => this.members = m);
+      .subscribe(m => this.members.set(m));
   }
 
   onSaved(member: Member) {
@@ -46,24 +42,14 @@ export class MembersPageComponent implements OnInit {
     });
   }
 
-  get filteredMembers(): Member[] {
+  filteredMembers = computed(() => {
+    const term = this.searchTerm().toLowerCase();
+    const list = this.members();
 
-    if (
-      this.lastFilter === this.searchTerm &&
-      this.lastMembers === this.members
-    ) {
-      return this.cachedFiltered;
-    }
+    if (!term) return list;
 
-    this.lastFilter = this.searchTerm;
-    this.lastMembers = this.members;
-
-    const term = this.searchTerm.toLowerCase();
-
-    this.cachedFiltered = this.members.filter(m =>
+    return list.filter(m =>
       m.name.toLowerCase().includes(term)
     );
-
-    return this.cachedFiltered;
-  }
+  });
 }
