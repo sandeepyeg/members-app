@@ -1,45 +1,66 @@
-<!-- Page Header -->
-<div class="flex items-center justify-between mb-6">
+<div class="max-w-7xl mx-auto px-6 py-8">
 
-    <!-- Title -->
-    <h1 class="text-2xl font-semibold">Members</h1>
+    <!-- Page Title -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-semibold tracking-tight">Members</h1>
+        <p class="text-base-content/60 mt-1">
+            Manage memberships and track expiry dates
+        </p>
+    </div>
+    <!-- Toolbar -->
+    <div class="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
 
-    <!-- Actions -->
-    <div class="flex items-center gap-3">
+        <!-- Left controls -->
+        <div class="flex flex-col gap-3 md:flex-row md:items-center">
 
-        <!-- Search -->
-        <input type="text" placeholder="Search members..." class="input input-bordered w-64"
-            (input)="searchTerm.set($any($event.target).value)" />
+            <!-- Search (with icon) -->
+            <label class="input input-bordered flex items-center gap-2 w-full md:w-80 bg-base-100">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                    class="w-4 h-4 opacity-60">
+                    <path fill-rule="evenodd"
+                        d="M10.5 3.75a6.75 6.75 0 104.02 12.17l3.28 3.28a.75.75 0 101.06-1.06l-3.28-3.28A6.75 6.75 0 0010.5 3.75zM5.25 10.5a5.25 5.25 0 1110.5 0 5.25 5.25 0 01-10.5 0z"
+                        clip-rule="evenodd" />
+                </svg>
 
-        <!-- Expired toggle -->
-        <label class="flex items-center gap-2 text-sm cursor-pointer">
-            <input type="checkbox" class="checkbox checkbox-sm"
-                (change)="expiredOnly.set($any($event.target).checked)" />
-            Expired only
-        </label>
+                <input type="text" class="grow" placeholder="Search members by name or email"
+                    (input)="searchTerm.set($any($event.target).value)" />
+            </label>
 
-        <!-- Add button -->
-        <button class="btn btn-primary" (click)="showAddModal.set(true)">
-            + Add Member
+            <!-- Expired toggle -->
+            <label class="flex items-center gap-2 px-3 h-12 rounded-lg border border-base-300 bg-base-100">
+                <input type="checkbox" class="toggle toggle-primary toggle-sm"
+                    (change)="expiredOnly.set($any($event.target).checked)" />
+                <span class="text-sm font-medium">Expired only</span>
+            </label>
+
+        </div>
+
+        <!-- Right CTA -->
+        <button class="btn btn-primary h-12 px-6 shadow-sm" (click)="showAddModal.set(true)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11 5h2v14h-2z" />
+                <path d="M5 11h14v2H5z" />
+            </svg>
+            Add Member
         </button>
 
+
     </div>
 
-</div>
 
-<!-- Grid -->
-<div class="grid gap-6 lg:grid-cols-3">
 
-    <!-- Table -->
-    <div class="lg:col-span-2">
-        <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
-        </app-members-list>
-    </div>
+    <!-- Main layout -->
+    <div class="grid gap-6 lg:grid-cols-3 items-start">
 
-    <!-- Details -->
-    <div class="card bg-base-100 shadow-md">
-        <div class="card-body">
-            <h2 class="card-title">Member Details</h2>
+        <!-- Table -->
+        <div class="lg:col-span-2">
+            <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
+            </app-members-list>
+        </div>
+
+        <!-- Details -->
+        <div class="bg-base-100 border rounded-xl p-5 shadow-sm">
+            <h2 class="font-semibold mb-3">Member Details</h2>
 
             <div *ngIf="!selectedMember" class="text-base-content/60">
                 Select a member to view details
@@ -48,23 +69,20 @@
             <app-member-details *ngIf="selectedMember" [member]="selectedMember">
             </app-member-details>
         </div>
+
     </div>
 
-</div>
+    <!-- Modal -->
+    <div class="modal" [class.modal-open]="showAddModal()">
+        <div class="modal-box max-w-lg">
+            <h3 class="font-semibold text-lg mb-4">Add Member</h3>
 
-<!-- Modal -->
-<div class="modal" [class.modal-open]="showAddModal()">
+            <app-member-form (saved)="onSaved($event)"></app-member-form>
 
-    <div class="modal-box max-w-lg">
-
-        <h3 class="font-semibold text-lg mb-4">Add Member</h3>
-
-        <app-member-form (saved)="onSaved($event)"></app-member-form>
-
-        <div class="modal-action">
-            <button class="btn" (click)="showAddModal.set(false)">Cancel</button>
+            <div class="modal-action">
+                <button class="btn" (click)="showAddModal.set(false)">Cancel</button>
+            </div>
         </div>
-
     </div>
 
 </div>
