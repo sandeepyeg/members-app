@@ -1,0 +1,7 @@
+<input type="text" placeholder="Search members..." [(ngModel)]="searchTerm" />
+
+<app-members-list [members]="filteredMembers" (selectMember)="onSelect($event)">
+</app-members-list>
+
+<app-member-details [member]="selectedMember">
+</app-member-details>

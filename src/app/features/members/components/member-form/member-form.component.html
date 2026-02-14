@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+    <label>Name</label>
+    <input formControlName="name" />
+    <div *ngIf="form.controls.name.touched && form.controls.name.invalid">
+        Name must be at least 3 characters
+    </div>
+
+    <label>Email</label>
+    <input formControlName="email" />
+    <div *ngIf="form.controls.email.errors?.['email']">
+        Invalid email format
+    </div>
+    <div *ngIf="form.controls.email.errors?.['emailTaken']">
+        Email already exists
+    </div>
+
+    <label>Membership</label>
+    <select formControlName="membershipType">
+        <option value="Basic">Basic</option>
+        <option value="Premium">Premium</option>
+    </select>
+
+    <label>Expiry Date</label>
+    <input type="date" formControlName="expiryDate" />
+    <div *ngIf="form.controls.expiryDate.errors?.['pastDate']">
+        Expiry must be in the future
+    </div>
+
+    <button [disabled]="form.invalid">Save Member</button>
+
+</form>
