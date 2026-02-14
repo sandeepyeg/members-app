@@ -1,39 +1,58 @@
-<!-- Page Header -->
+<!-- Header -->
 <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
     <h1 class="text-2xl font-semibold">Members</h1>
 
-    <!-- Search -->
-    <input type="text" placeholder="Search members..." class="input input-bordered w-full md:w-80"
-        (input)="searchTerm.set($any($event.target).value)" />
+    <div class="flex gap-3">
 
+        <!-- Search -->
+        <input type="text" placeholder="Search members..." class="input input-bordered w-full md:w-80"
+            (input)="searchTerm.set($any($event.target).value)" />
+
+        <!-- Add button -->
+        <button class="btn btn-primary" (click)="showAddModal.set(true)">
+            Add Member
+        </button>
+
+    </div>
 </div>
 
-<!-- Layout Grid -->
+<!-- Grid -->
 <div class="grid gap-6 lg:grid-cols-3">
 
-    <!-- Members Table -->
+    <!-- Table -->
     <div class="lg:col-span-2">
         <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
         </app-members-list>
     </div>
 
-    <!-- Details Panel -->
+    <!-- Details -->
     <div class="card bg-base-100 shadow-md">
-
         <div class="card-body">
-
             <h2 class="card-title">Member Details</h2>
 
-            <!-- Empty state -->
             <div *ngIf="!selectedMember" class="text-base-content/60">
                 Select a member to view details
             </div>
 
-            <!-- Details -->
             <app-member-details *ngIf="selectedMember" [member]="selectedMember">
             </app-member-details>
+        </div>
+    </div>
 
+</div>
+
+<!-- Modal -->
+<div class="modal" [class.modal-open]="showAddModal()">
+
+    <div class="modal-box max-w-lg">
+
+        <h3 class="font-semibold text-lg mb-4">Add Member</h3>
+
+        <app-member-form (saved)="onSaved($event)"></app-member-form>
+
+        <div class="modal-action">
+            <button class="btn" (click)="showAddModal.set(false)">Cancel</button>
         </div>
 
     </div>
