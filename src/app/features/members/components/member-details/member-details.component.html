@@ -1,1 +1,41 @@
-<p>member-details works!</p>
+<div *ngIf="member as m; else emptyState" class="space-y-4">
+
+    <!-- Name -->
+    <div>
+        <div class="text-sm text-base-content/60">Name</div>
+        <div class="font-medium text-lg">{{ m.name }}</div>
+    </div>
+
+    <!-- Email -->
+    <div>
+        <div class="text-sm text-base-content/60">Email</div>
+        <div class="text-base-content/80">{{ m.email }}</div>
+    </div>
+
+    <!-- Membership -->
+    <div>
+        <div class="text-sm text-base-content/60">Membership</div>
+        <span class="badge" [ngClass]="{
+        'badge-primary': m.membershipType === 'Premium',
+        'badge-ghost': m.membershipType === 'Basic'
+      }">
+            {{ m.membershipType }}
+        </span>
+    </div>
+
+    <!-- Expiry -->
+    <div>
+        <div class="text-sm text-base-content/60">Expiry Date</div>
+        <div class="font-medium" [class.text-error]="isExpired(m.expiryDate)">
+            {{ m.expiryDate | date }}
+        </div>
+    </div>
+
+</div>
+
+<!-- Empty state -->
+<ng-template #emptyState>
+    <div class="text-base-content/60">
+        No member selected
+    </div>
+</ng-template>
