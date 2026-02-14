@@ -1,59 +1,58 @@
-<div class="card bg-base-100 shadow-md">
+<div class="bg-base-100 border rounded-xl shadow-sm">
 
-    <div class="card-body p-0">
+    <div class="overflow-x-auto">
 
-        <!-- Table wrapper for responsiveness -->
-        <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
 
-            <table class="table table-zebra w-full">
+            <thead class="bg-base-200 text-base-content">
+                <tr>
+                    <th class="px-6 py-3">Name</th>
+                    <th class="px-6 py-3 hidden sm:table-cell">Email</th>
+                    <th class="px-6 py-3">Membership</th>
+                    <th class="px-6 py-3">Expiry</th>
+                </tr>
+            </thead>
 
-                <thead class="bg-base-200 text-base-content">
-                    <tr>
-                        <th class="px-6 py-3">Name</th>
-                        <th class="px-6 py-3">Email</th>
-                        <th class="px-6 py-3">Membership</th>
-                        <th class="px-6 py-3">Expiry</th>
-                    </tr>
-                </thead>
+            <tbody>
 
-                <tbody>
+                <!-- Empty -->
+                <tr *ngIf="members.length === 0">
+                    <td colspan="4" class="text-center py-12 text-base-content/60">
+                        No members found
+                    </td>
+                </tr>
 
-                    <!-- Empty state -->
-                    <tr *ngIf="members.length === 0">
-                        <td colspan="4" class="text-center py-10 text-base-content/60">
-                            No members found
-                        </td>
-                    </tr>
+                <!-- Rows -->
+                <tr *ngFor="let member of members; trackBy: trackById" class="cursor-pointer hover"
+                    (click)="select(member)">
 
-                    <!-- Member rows -->
-                    <tr *ngFor="let member of members; trackBy: trackById" class="cursor-pointer hover"
-                        (click)="select(member)">
-                        <td class="px-6 py-3 font-medium">
-                            {{ member.name }}
-                        </td>
+                    <td class="px-6 py-3 font-medium">
+                        {{ member.name }}
+                    </td>
 
-                        <td class="px-6 py-3 text-base-content/70">
-                            {{ member.email }}
-                        </td>
+                    <td class="px-6 py-3 text-base-content/70 hidden sm:table-cell">
+                        {{ member.email }}
+                    </td>
 
-                        <td class="px-6 py-3">
-                            <span class="badge" [ngClass]="{
-                  'badge-primary': member.membershipType === 'Premium',
-                  'badge-ghost': member.membershipType === 'Basic'
-                }">
-                                {{ member.membershipType }}
-                            </span>
-                        </td>
+                    <td class="px-6 py-3">
+                        <span class="badge" [ngClass]="{
+                'badge-primary': member.membershipType === 'Premium',
+                'badge-outline': member.membershipType === 'Basic'
+              }">
+                            {{ member.membershipType }}
+                        </span>
+                    </td>
 
-                        <td class="px-6 py-3" [class.text-error]="isExpired(member.expiryDate)">
-                            {{ member.expiryDate | date }}
-                        </td>
-                    </tr>
+                    <td class="px-6 py-3" [class.text-error]="isExpired(member.expiryDate)">
+                        {{ member.expiryDate | date }}
+                    </td>
 
-                </tbody>
+                </tr>
 
-            </table>
+            </tbody>
 
-        </div>
+        </table>
+
     </div>
+
 </div>
