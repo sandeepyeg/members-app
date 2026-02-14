@@ -1,17 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LoadingService } from './core/services/loading.service';
+import { CommonModule } from '@angular/common';
 import { SpinnerComponent } from './shared/components/spinner/spinner.component';
+import { LoadingService } from './core/services/loading.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SpinnerComponent],
+  imports: [CommonModule, RouterOutlet, SpinnerComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  loading$ = this.loadingService.loading;
-
-  constructor(private loadingService: LoadingService) { }
+  loading = inject(LoadingService).loading;
 }

@@ -1,7 +1,9 @@
-<input type="text" placeholder="Search members..." [(ngModel)]="searchTerm" />
+<input type="text" placeholder="Search members..." (input)="searchTerm.set($any($event.target).value)" />
 
-<app-members-list [members]="filteredMembers" (selectMember)="onSelect($event)">
+
+<app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
 </app-members-list>
+
 
 <app-member-details [member]="selectedMember">
 </app-member-details>
