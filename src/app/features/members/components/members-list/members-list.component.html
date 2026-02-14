@@ -1,20 +1,59 @@
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Membership</th>
-            <th>Expiry Date</th>
-        </tr>
-    </thead>
+<div class="card bg-base-100 shadow-md">
 
-    <tbody>
-        <tr *ngFor="let member of members; trackBy: trackById" [class.expired]="isExpired(member.expiryDate)"
-            (click)="select(member)">
-            <td>{{ member.name }}</td>
-            <td>{{ member.email }}</td>
-            <td>{{ member.membershipType }}</td>
-            <td>{{ member.expiryDate | date }}</td>
-        </tr>
-    </tbody>
-</table>
+    <div class="card-body p-0">
+
+        <!-- Table wrapper for responsiveness -->
+        <div class="overflow-x-auto">
+
+            <table class="table table-zebra w-full">
+
+                <thead class="bg-base-200 text-base-content">
+                    <tr>
+                        <th class="px-6 py-3">Name</th>
+                        <th class="px-6 py-3">Email</th>
+                        <th class="px-6 py-3">Membership</th>
+                        <th class="px-6 py-3">Expiry</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- Empty state -->
+                    <tr *ngIf="members.length === 0">
+                        <td colspan="4" class="text-center py-10 text-base-content/60">
+                            No members found
+                        </td>
+                    </tr>
+
+                    <!-- Member rows -->
+                    <tr *ngFor="let member of members; trackBy: trackById" class="cursor-pointer hover"
+                        (click)="select(member)">
+                        <td class="px-6 py-3 font-medium">
+                            {{ member.name }}
+                        </td>
+
+                        <td class="px-6 py-3 text-base-content/70">
+                            {{ member.email }}
+                        </td>
+
+                        <td class="px-6 py-3">
+                            <span class="badge" [ngClass]="{
+                  'badge-primary': member.membershipType === 'Premium',
+                  'badge-ghost': member.membershipType === 'Basic'
+                }">
+                                {{ member.membershipType }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-3" [class.text-error]="isExpired(member.expiryDate)">
+                            {{ member.expiryDate | date }}
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+</div>

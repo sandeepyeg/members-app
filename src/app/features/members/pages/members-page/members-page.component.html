@@ -1,9 +1,41 @@
-<input type="text" placeholder="Search members..." (input)="searchTerm.set($any($event.target).value)" />
+<!-- Page Header -->
+<div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
+    <h1 class="text-2xl font-semibold">Members</h1>
 
-<app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
-</app-members-list>
+    <!-- Search -->
+    <input type="text" placeholder="Search members..." class="input input-bordered w-full md:w-80"
+        (input)="searchTerm.set($any($event.target).value)" />
 
+</div>
 
-<app-member-details [member]="selectedMember">
-</app-member-details>
+<!-- Layout Grid -->
+<div class="grid gap-6 lg:grid-cols-3">
+
+    <!-- Members Table -->
+    <div class="lg:col-span-2">
+        <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
+        </app-members-list>
+    </div>
+
+    <!-- Details Panel -->
+    <div class="card bg-base-100 shadow-md">
+
+        <div class="card-body">
+
+            <h2 class="card-title">Member Details</h2>
+
+            <!-- Empty state -->
+            <div *ngIf="!selectedMember" class="text-base-content/60">
+                Select a member to view details
+            </div>
+
+            <!-- Details -->
+            <app-member-details *ngIf="selectedMember" [member]="selectedMember">
+            </app-member-details>
+
+        </div>
+
+    </div>
+
+</div>

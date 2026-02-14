@@ -1,2 +1,22 @@
+<!-- Global loading overlay -->
 <app-spinner *ngIf="loading()"></app-spinner>
-<router-outlet></router-outlet>
+
+<div class="min-h-screen bg-base-200">
+
+    <div class="navbar bg-base-100 shadow-md px-6">
+        <div class="flex-1">
+            <a class="text-xl font-semibold">Enterprise Members</a>
+        </div>
+
+        <div class="flex-none">
+            <a routerLink="/members" class="btn btn-ghost btn-sm">
+                Members
+            </a>
+        </div>
+    </div>
+
+    <main class="max-w-6xl mx-auto p-6">
+        <router-outlet></router-outlet>
+    </main>
+
+</div>
