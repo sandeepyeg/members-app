@@ -18,6 +18,7 @@ import { ToastService } from '../../../../core/services/toast.service';
 export class MembersPageComponent implements OnInit {
 
   selectedMember?: Member;
+  expiredOnly = signal(false);
   showAddModal = signal(false);
   members = signal<Member[]>([]);
   searchTerm = signal('');
@@ -47,12 +48,23 @@ export class MembersPageComponent implements OnInit {
 
   filteredMembers = computed(() => {
     const term = this.searchTerm().toLowerCase();
+    const expiredOnly = this.expiredOnly();
     const list = this.members();
 
-    if (!term) return list;
+    return list.filter(m => {
 
-    return list.filter(m =>
-      m.name.toLowerCase().includes(term)
-    );
+      const matchesSearch =
+        !term ||
+        m.name.toLowerCase().includes(term) ||
+        m.email.toLowerCase().includes(term);
+
+      const isExpired =
+        new Date(m.expiryDate) < new Date();
+
+      const matchesExpired =
+        !expiredOnly || isExpired;
+
+      return matchesSearch && matchesExpired;
+    });
   });
 }

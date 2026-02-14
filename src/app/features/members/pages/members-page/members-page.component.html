@@ -2,12 +2,17 @@
 <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
     <h1 class="text-2xl font-semibold">Members</h1>
-
-    <div class="flex gap-3">
+    <div class="flex flex-wrap gap-3 items-center">
 
         <!-- Search -->
         <input type="text" placeholder="Search members..." class="input input-bordered w-full md:w-80"
             (input)="searchTerm.set($any($event.target).value)" />
+
+        <!-- Expired toggle -->
+        <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" class="checkbox" (change)="expiredOnly.set($any($event.target).checked)" />
+            <span class="text-sm">Expired only</span>
+        </label>
 
         <!-- Add button -->
         <button class="btn btn-primary" (click)="showAddModal.set(true)">
@@ -15,6 +20,7 @@
         </button>
 
     </div>
+
 </div>
 
 <!-- Grid -->
