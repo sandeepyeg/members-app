@@ -31,7 +31,7 @@ export class AppComponent {
   user = this.auth.user; // signal<User | null>
 
   logout() {
-    // AuthService.logout already navigates to /login
-    this.auth.logout();
+    // AuthService.logout returns an observable that must be subscribed to
+    this.auth.logout().subscribe();
   }
 }

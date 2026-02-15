@@ -48,10 +48,10 @@
     </div>
 
     <!-- Layout -->
-    <div class="grid gap-6 xl:grid-cols-3">
+    <div class="grid gap-6 lg:grid-cols-3">
 
         <!-- Table -->
-        <div class="xl:col-span-2">
+        <div class="lg:col-span-2">
             <app-members-list [members]="members()" [currentPage]="currentPage()" [pageSize]="pageSize"
                 [totalCount]="totalCount()" (pageChange)="onPageChange($event)" (selectMember)="onSelect($event)"
                 (edit)="onEdit($event)" (delete)="onDelete($event)">
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Details panel -->
-        <div class="bg-base-100 border rounded-xl p-5 shadow-sm">
+        <div class="bg-base-100 border rounded-xl p-5 shadow-sm h-fit">
             <h2 class="font-semibold mb-3">Member Details</h2>
 
             <div *ngIf="!selectedMember()" class="text-base-content/60">
@@ -76,12 +76,31 @@
     <!-- Modal -->
     <div class="modal" [class.modal-open]="showAddModal()">
         <div class="modal-box w-full max-w-lg">
-            <h3 class="font-semibold text-lg mb-4">Add Member</h3>
+            <h3 class="font-semibold text-lg mb-4">
+                {{ editingMember() ? 'Edit Member' : 'Add Member' }}
+            </h3>
 
-            <app-member-form #memberForm [member]="editingMember() || undefined" (saved)="onSaved($event)"
-                (cancel)="closeModal(memberForm)">
+            <app-member-form *ngIf="showAddModal()" #memberForm [member]="editingMember() || undefined"
+                (saved)="onSaved($event)" (cancel)="closeModal(memberForm)">
             </app-member-form>
         </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal modal-open" *ngIf="memberToDelete()">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg text-error">Delete Member</h3>
+            <p class="py-4">
+                Are you sure you want to delete <span class="font-bold">{{ memberToDelete()?.name }}</span>?
+                <br>
+                <span class="text-sm text-base-content/70">This action cannot be undone.</span>
+            </p>
+            <div class="modal-action">
+                <button class="btn" (click)="memberToDelete.set(null)">Cancel</button>
+                <button class="btn btn-error" (click)="confirmDelete()">Delete</button>
+            </div>
+        </div>
+        <div class="modal-backdrop" (click)="memberToDelete.set(null)"></div>
     </div>
 
 </div>

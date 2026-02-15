@@ -1,4 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, signal, computed, Output, EventEmitter } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Member } from '../../models/member.model';
 import { MemberService } from '../../services/member.service';
 import { MemberDetailsComponent } from '../../components/member-details/member-details.component';
@@ -20,6 +23,7 @@ export class MembersPageComponent implements OnInit {
   selectedMember = signal<Member | null>(null);
   editingMember = signal<Member | null>(null);
   showAddModal = signal(false);
+  memberToDelete = signal<Member | null>(null);
 
   // Data
   members = signal<Member[]>([]);
@@ -31,10 +35,22 @@ export class MembersPageComponent implements OnInit {
   searchTerm = signal('');
   expiredOnly = signal(false);
 
+  private searchSubject = new Subject<string>();
+
   constructor(
     private memberService: MemberService,
     private toastService: ToastService
-  ) { }
+  ) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(term => {
+      this.searchTerm.set(term);
+      this.currentPage.set(1);
+      this.loadMembers();
+    });
+  }
 
   ngOnInit(): void {
     this.loadMembers();
@@ -46,9 +62,16 @@ export class MembersPageComponent implements OnInit {
       this.pageSize,
       this.searchTerm(),
       this.expiredOnly()
-    ).subscribe(result => {
-      this.members.set(result.items);
-      this.totalCount.set(result.totalCount);
+    ).subscribe({
+      next: (result) => {
+        this.members.set(result.items);
+        this.totalCount.set(result.totalCount);
+      },
+      error: (error) => {
+        console.error('Error loading members', error);
+        this.members.set([]);
+        this.totalCount.set(0);
+      }
     });
   }
 
@@ -58,9 +81,7 @@ export class MembersPageComponent implements OnInit {
   }
 
   onSearchChange(term: string) {
-    this.searchTerm.set(term);
-    this.currentPage.set(1); // Reset to first page
-    this.loadMembers();
+    this.searchSubject.next(term);
   }
 
   onExpiredFilterChange(expired: boolean) {
@@ -75,11 +96,12 @@ export class MembersPageComponent implements OnInit {
 
   onSaved(memberData: Member) {
     const dto = {
+      ...(memberData.id ? { id: memberData.id } : {}),
       name: memberData.name,
       email: memberData.email,
       membershipType: memberData.membershipType,
       expiryDate: memberData.expiryDate
-    } as any; // Cast to avoid strict type checks temporarily, strictly should be CreateMemberDto | UpdateMemberDto
+    } as any; // Cast to avoid strict type checks, strictly should be CreateMemberDto | UpdateMemberDto
 
     const request = memberData.id
       ? this.memberService.updateMember(memberData.id, dto)
@@ -99,12 +121,23 @@ export class MembersPageComponent implements OnInit {
   }
 
   onDelete(member: Member) {
-    if (!confirm(`Delete ${member.name}?`)) return;
+    this.memberToDelete.set(member);
+  }
+
+  confirmDelete() {
+    const member = this.memberToDelete();
+    if (!member) return;
 
     this.memberService.deleteMember(member.id).subscribe(() => {
+      this.toastService.show('Member deleted successfully', 'success');
       this.loadMembers();
-      this.toastService.show('Member deleted', 'success');
-      // If page becomes empty, go back one page
+      this.memberToDelete.set(null);
+
+      if (this.selectedMember()?.id === member.id) {
+        this.selectedMember.set(null);
+      }
+
+      // Handle last item on page
       if (this.members().length === 0 && this.currentPage() > 1) {
         this.currentPage.update(p => p - 1);
         this.loadMembers();
@@ -123,3 +156,5 @@ export class MembersPageComponent implements OnInit {
     if (form?.form) form.form.reset();
   }
 }
+
+
