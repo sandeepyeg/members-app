@@ -1,5 +1,7 @@
 <!-- Global loading overlay -->
 <app-spinner *ngIf="loading()"></app-spinner>
+
+<!-- Toast -->
 <div class="toast toast-top toast-end z-50" *ngIf="toast() as t">
     <div class="alert" [ngClass]="{
       'alert-success': t.type === 'success',
@@ -9,17 +11,29 @@
         <span>{{ t.text }}</span>
     </div>
 </div>
+
 <div class="min-h-screen bg-base-200">
 
     <div class="navbar bg-base-100 shadow-md px-6">
         <div class="flex-1">
-            <a class="text-xl font-semibold">Enterprise Members</a>
+            <a class="text-xl font-semibold">Dummy Project</a>
         </div>
 
-        <div class="flex-none">
-            <a routerLink="/members" class="btn btn-ghost btn-sm">
+        <div class="flex-none flex items-center gap-2">
+
+            <!-- optional: show logged in email -->
+            <span *ngIf="loggedIn() && user() as u" class="hidden sm:inline text-sm text-base-content/60 mr-2">
+                {{ u.email }}
+            </span>
+
+            <!-- <a *ngIf="loggedIn()" routerLink="/members" routerLinkActive="btn-active" class="btn btn-ghost btn-sm">
                 Members
-            </a>
+            </a> -->
+
+            <button *ngIf="loggedIn()" class="btn btn-outline btn-error btn-sm" (click)="logout()">
+                Sign out
+            </button>
+
         </div>
     </div>
 
