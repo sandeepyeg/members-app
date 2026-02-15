@@ -75,10 +75,10 @@
         <div class="modal-box w-full max-w-lg">
             <h3 class="font-semibold text-lg mb-4">Add Member</h3>
 
-            <app-member-form (saved)="onSaved($event)"></app-member-form>
+        <app-member-form (saved)="onSaved($event)" #memberForm></app-member-form>
 
         <div class="modal-action">
-            <button class="btn btn-outline" (click)="showAddModal.set(false)">
+            <button class="btn btn-outline" (click)="closeModal(memberForm)">
                 Cancel
             </button>
         </div>
