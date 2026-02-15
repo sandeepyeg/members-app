@@ -1,73 +1,71 @@
-<div class="card bg-base-100 shadow-md">
+<div class="bg-base-100 border border-base-300 rounded-2xl shadow-sm">
 
-    <div class="card-body space-y-5">
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-base-200">
+        <h2 class="text-lg font-semibold">Member Details</h2>
+        <p class="text-sm text-base-content/60 mt-1">
+            Fill in the information below to add or update a member
+        </p>
+    </div>
 
-        <h2 class="card-title">Member Form</h2>
+    <!-- Form body -->
+    <div class="p-6">
 
-        <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6">
 
             <!-- Name -->
-            <div class="form-control">
-                <label class="label">
-                    <span class="label-text">Name</span>
-                </label>
-
+            <div>
+                <label class="text-sm font-medium block mb-1">Full Name</label>
                 <input type="text" formControlName="name" class="input input-bordered w-full"
-                    placeholder="Enter member name" />
-
-                <div class="text-error text-sm mt-1" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+                    placeholder="e.g. John Smith" />
+                <p class="text-error text-sm mt-1" *ngIf="form.controls.name.touched && form.controls.name.invalid">
                     Name must be at least 3 characters
-                </div>
+                </p>
             </div>
 
             <!-- Email -->
-            <div class="form-control">
-                <label class="label">
-                    <span class="label-text">Email</span>
-                </label>
-
+            <div>
+                <label class="text-sm font-medium block mb-1">Email Address</label>
                 <input type="email" formControlName="email" class="input input-bordered w-full"
-                    placeholder="Enter email address" />
+                    placeholder="john@company.com" />
 
-                <div class="text-error text-sm mt-1" *ngIf="form.controls.email.errors?.['email']">
-                    Invalid email format
-                </div>
+                <p class="text-error text-sm mt-1" *ngIf="form.controls.email.errors?.['email']">
+                    Enter a valid email address
+                </p>
 
-                <div class="text-error text-sm mt-1" *ngIf="form.controls.email.errors?.['emailTaken']">
-                    Email already exists
-                </div>
+                <p class="text-error text-sm mt-1" *ngIf="form.controls.email.errors?.['emailTaken']">
+                    This email is already registered
+                </p>
             </div>
 
-            <!-- Membership -->
-            <div class="form-control">
-                <label class="label">
-                    <span class="label-text">Membership</span>
-                </label>
+            <!-- Membership + Expiry row -->
+            <div class="grid gap-4 md:grid-cols-2">
 
-                <select formControlName="membershipType" class="select select-bordered w-full">
-                    <option value="Basic">Basic</option>
-                    <option value="Premium">Premium</option>
-                </select>
-            </div>
-
-            <!-- Expiry -->
-            <div class="form-control">
-                <label class="label">
-                    <span class="label-text">Expiry Date</span>
-                </label>
-
-                <input type="date" formControlName="expiryDate" class="input input-bordered w-full" />
-
-                <div class="text-error text-sm mt-1" *ngIf="form.controls.expiryDate.errors?.['pastDate']">
-                    Expiry must be in the future
+                <div>
+                    <label class="text-sm font-medium block mb-1">Membership Type</label>
+                    <select formControlName="membershipType" class="select select-bordered w-full">
+                        <option value="Basic">Basic</option>
+                        <option value="Premium">Premium</option>
+                    </select>
                 </div>
+
+                <div>
+                    <label class="text-sm font-medium block mb-1">Expiry Date</label>
+                    <input type="date" formControlName="expiryDate" class="input input-bordered w-full" />
+
+                    <p class="text-error text-sm mt-1" *ngIf="form.controls.expiryDate.errors?.['pastDate']">
+                        Expiry must be in the future
+                    </p>
+                </div>
+
             </div>
 
-            <!-- Buttons -->
-            <div class="pt-4 flex justify-end">
-                <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+            <!-- Footer actions -->
+            <div class="flex justify-end gap-3 pt-6 border-t border-base-200">
+                <button type="submit" class="btn btn-primary px-8" [disabled]="form.invalid">
                     Save Member
                 </button>
+
             </div>
 
         </form>
