@@ -35,4 +35,9 @@ export class MemberFormComponent implements OnInit {
     if (this.form.invalid) return;
     this.saved.emit(this.form.value as Member);
   }
+  resetForm() {
+    this.form.reset({
+      membershipType: 'Basic'
+    });
+  }
 }

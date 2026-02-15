@@ -45,6 +45,10 @@ export class MembersPageComponent implements OnInit {
       this.toastService.show('Member added successfully!', 'success');
     });
   }
+  closeModal(form: any) {
+    this.showAddModal.set(false);
+    form.resetForm();
+  }
 
   filteredMembers = computed(() => {
     const term = this.searchTerm().toLowerCase();
