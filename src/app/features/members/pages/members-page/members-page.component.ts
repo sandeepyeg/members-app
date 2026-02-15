@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, computed, Output, EventEmitter } from '@angular/core';
 import { Member } from '../../models/member.model';
 import { MemberService } from '../../services/member.service';
 import { MemberDetailsComponent } from '../../components/member-details/member-details.component';
@@ -22,6 +22,7 @@ export class MembersPageComponent implements OnInit {
   showAddModal = signal(false);
   members = signal<Member[]>([]);
   searchTerm = signal('');
+  editingMember = signal<Member | null>(null);
 
   constructor(private memberService: MemberService, private toastService: ToastService) { }
 
@@ -39,16 +40,44 @@ export class MembersPageComponent implements OnInit {
   }
 
   onSaved(member: Member) {
-    this.memberService.createMember(member).subscribe(() => {
+
+    const request = member.id
+      ? this.memberService.updateMember(member)
+      : this.memberService.createMember(member);
+
+    request.subscribe(() => {
       this.showAddModal.set(false);
+      this.editingMember.set(null);
       this.loadMembers();
-      this.toastService.show('Member added successfully!', 'success');
+
+      this.toastService.show(
+        member.id ? 'Member updated' : 'Member added',
+        'success'
+      );
     });
   }
-  closeModal(form: any) {
-    this.showAddModal.set(false);
-    form.resetForm();
+  onDelete(member: Member) {
+    if (!confirm(`Delete ${member.name}?`)) return;
+
+    this.memberService.deleteMember(member.id).subscribe(() => {
+      this.loadMembers();
+      this.toastService.show('Member deleted', 'success');
+    });
   }
+
+  onEdit(member: Member) {
+    this.editingMember.set(member);
+    this.showAddModal.set(true);
+  }
+  closeModal(form?: any) {
+    this.showAddModal.set(false);
+    this.editingMember.set(null);
+
+    if (form?.form) {
+      form.form.reset();
+    }
+  }
+
 
   filteredMembers = computed(() => {
     const term = this.searchTerm().toLowerCase();

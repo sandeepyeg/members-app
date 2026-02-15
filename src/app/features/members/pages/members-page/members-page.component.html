@@ -52,8 +52,10 @@
 
         <!-- Table -->
         <div class="xl:col-span-2">
-            <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)">
+            <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)" (edit)="onEdit($event)"
+                (delete)="onDelete($event)">
             </app-members-list>
+
         </div>
 
         <!-- Details panel -->
@@ -75,13 +77,9 @@
         <div class="modal-box w-full max-w-lg">
             <h3 class="font-semibold text-lg mb-4">Add Member</h3>
 
-        <app-member-form (saved)="onSaved($event)" #memberForm></app-member-form>
-
-        <div class="modal-action">
-            <button class="btn btn-outline" (click)="closeModal(memberForm)">
-                Cancel
-            </button>
-        </div>
+            <app-member-form #memberForm [member]="editingMember() || undefined" (saved)="onSaved($event)"
+                (cancel)="closeModal(memberForm)">
+            </app-member-form>
         </div>
     </div>
 

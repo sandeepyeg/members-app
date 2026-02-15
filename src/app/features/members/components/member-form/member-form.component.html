@@ -62,11 +62,17 @@
 
             <!-- Footer actions -->
             <div class="flex justify-end gap-3 pt-6 border-t border-base-200">
+
+                <button type="button" class="btn btn-outline btn-neutral" (click)="cancel.emit()">
+                    Cancel
+                </button>
+
                 <button type="submit" class="btn btn-primary px-8" [disabled]="form.invalid">
                     Save Member
                 </button>
 
             </div>
+
 
         </form>
 
