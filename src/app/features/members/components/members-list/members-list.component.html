@@ -1,13 +1,14 @@
 <div class="bg-base-100 border rounded-xl shadow-sm">
 
-    <div class="overflow-x-auto">
+    <!-- Desktop Table View -->
+    <div class="hidden md:block overflow-x-auto">
 
         <table class="table table-zebra w-full">
 
             <thead class="bg-base-200 text-base-content">
                 <tr>
                     <th class="px-6 py-3">Name</th>
-                    <th class="px-6 py-3 hidden sm:table-cell">Email</th>
+                    <th class="px-6 py-3">Email</th>
                     <th class="px-6 py-3">Membership</th>
                     <th class="px-6 py-3">Expiry</th>
                     <th class="px-6 py-3 text-right">Actions</th>
@@ -18,7 +19,7 @@
 
                 <!-- Empty -->
                 <tr *ngIf="members.length === 0">
-                    <td colspan="4" class="text-center py-12 text-base-content/60">
+                    <td colspan="5" class="text-center py-12 text-base-content/60">
                         No members found
                     </td>
                 </tr>
@@ -31,7 +32,7 @@
                         {{ member.name }}
                     </td>
 
-                    <td class="px-6 py-3 text-base-content/70 hidden sm:table-cell">
+                    <td class="px-6 py-3 text-base-content/70">
                         {{ member.email }}
                     </td>
 
@@ -49,11 +50,11 @@
                     </td>
                     <td class="px-6 py-3 text-right space-x-2">
 
-                        <button class="btn btn-xs btn-outline" (click)="$event.stopPropagation(); edit.emit(member)">
+                        <button class="btn btn-ghost btn-xs" (click)="$event.stopPropagation(); edit.emit(member)">
                             Edit
                         </button>
 
-                        <button class="btn btn-xs btn-error btn-outline"
+                        <button class="btn btn-ghost btn-xs text-error"
                             (click)="$event.stopPropagation(); delete.emit(member)">
                             Delete
                         </button>
@@ -69,29 +70,70 @@
 
     </div>
 
+    <!-- Mobile Card View -->
+    <div class="md:hidden grid grid-cols-1 divide-y">
+
+        <div *ngIf="members.length === 0" class="p-8 text-center text-base-content/60">
+            No members found
+        </div>
+
+        <div *ngFor="let member of members; trackBy: trackById"
+            class="p-4 bg-base-100 active:bg-base-200 transition-colors cursor-pointer" (click)="select(member)">
+
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <h3 class="font-medium text-base">{{ member.name }}</h3>
+                    <p class="text-sm text-base-content/70">{{ member.email }}</p>
+                </div>
+                <span class="badge badge-sm" [ngClass]="{
+                    'badge-primary': member.membershipType === 'Premium',
+                    'badge-outline': member.membershipType === 'Basic'
+                  }">{{ member.membershipType }}</span>
+            </div>
+
+            <div class="flex justify-between items-center mt-3">
+                <div class="text-sm" [class.text-error]="isExpired(member.expiryDate)">
+                    Expires: {{ member.expiryDate | date }}
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="btn btn-ghost btn-xs" (click)="$event.stopPropagation(); edit.emit(member)">
+                        Edit
+                    </button>
+                    <button class="btn btn-ghost btn-xs text-error"
+                        (click)="$event.stopPropagation(); delete.emit(member)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- Pagination -->
     <div class="p-4 border-t flex justify-between items-center" *ngIf="totalCount > 0">
-        <div class="text-sm text-base-content/70">
-            Showing {{(currentPage - 1) * pageSize + 1}} to {{ currentPage * pageSize > totalCount ? totalCount : currentPage * pageSize }} of {{totalCount}} entries
+        <div class="text-sm text-base-content/70 hidden sm:block">
+            Showing {{(currentPage - 1) * pageSize + 1}} to {{ currentPage * pageSize > totalCount ? totalCount :
+            currentPage * pageSize }} of {{totalCount}} entries
         </div>
-        
+        <div class="text-sm text-base-content/70 sm:hidden">
+            Page {{currentPage}} of {{totalPages}}
+        </div>
+
         <div class="join" *ngIf="totalPages > 1">
-            <button class="join-item btn btn-sm" 
-                    [disabled]="currentPage === 1"
-                    (click)="onPageChange(currentPage - 1)">
+            <button class="join-item btn btn-sm" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">
                 «
             </button>
-            
-            <button *ngFor="let page of pages" 
-                    class="join-item btn btn-sm"
-                    [class.btn-active]="page === currentPage"
-                    (click)="onPageChange(page)">
+
+            <!-- Hide individual page numbers on very small screens if too many, but standard logic is usually ok for now -->
+            <!-- We will show them on sm+ screens only to save space on mobile -->
+            <button *ngFor="let page of pages" class="join-item btn btn-sm hidden sm:block"
+                [class.btn-active]="page === currentPage" (click)="onPageChange(page)">
                 {{page}}
             </button>
-            
-            <button class="join-item btn btn-sm" 
-                    [disabled]="currentPage === totalPages"
-                    (click)="onPageChange(currentPage + 1)">
+
+            <button class="join-item btn btn-sm" [disabled]="currentPage === totalPages"
+                (click)="onPageChange(currentPage + 1)">
                 »
             </button>
         </div>
