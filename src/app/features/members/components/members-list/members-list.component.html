@@ -10,6 +10,7 @@
                     <th class="px-6 py-3 hidden sm:table-cell">Email</th>
                     <th class="px-6 py-3">Membership</th>
                     <th class="px-6 py-3">Expiry</th>
+                    <th class="px-6 py-3 text-right">Actions</th>
                 </tr>
             </thead>
 
@@ -46,8 +47,21 @@
                     <td class="px-6 py-3" [class.text-error]="isExpired(member.expiryDate)">
                         {{ member.expiryDate | date }}
                     </td>
+                    <td class="px-6 py-3 text-right space-x-2">
+
+                        <button class="btn btn-xs btn-outline" (click)="$event.stopPropagation(); edit.emit(member)">
+                            Edit
+                        </button>
+
+                        <button class="btn btn-xs btn-error btn-outline"
+                            (click)="$event.stopPropagation(); delete.emit(member)">
+                            Delete
+                        </button>
+
+                    </td>
 
                 </tr>
+
 
             </tbody>
 

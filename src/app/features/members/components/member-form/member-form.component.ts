@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { emailUniqueValidator, futureDateValidator } from '../validators/member.validators';
 import { MemberService } from '../../services/member.service';
@@ -15,7 +15,9 @@ import { Member } from '../../models/member.model';
 })
 export class MemberFormComponent implements OnInit {
   @Output() saved = new EventEmitter<Member>();
+  @Input() member?: Member;
 
+  @Output() cancel = new EventEmitter<void>();
 
   form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -29,12 +31,23 @@ export class MemberFormComponent implements OnInit {
     private memberService: MemberService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    if (this.member) {
+      this.form.patchValue(this.member);
+    }
+  }
 
   submit() {
     if (this.form.invalid) return;
-    this.saved.emit(this.form.value as Member);
+
+    const value = {
+      ...this.member,  
+      ...this.form.value
+    };
+
+    this.saved.emit(value as Member);
   }
+
   resetForm() {
     this.form.reset({
       membershipType: 'Basic'

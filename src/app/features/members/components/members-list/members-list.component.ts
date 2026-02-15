@@ -14,7 +14,10 @@ import { SharedModule } from '../../../../shared/shared.module';
 export class MembersListComponent {
 
   @Input() members: Member[] = [];
+
   @Output() selectMember = new EventEmitter<Member>();
+  @Output() edit = new EventEmitter<Member>();
+  @Output() delete = new EventEmitter<Member>();
 
   select(member: Member) {
     this.selectMember.emit(member);
