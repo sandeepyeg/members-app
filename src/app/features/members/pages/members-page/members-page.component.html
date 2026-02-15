@@ -24,13 +24,13 @@
                 </svg>
 
                 <input type="text" class="grow" placeholder="Search members..."
-                    (input)="searchTerm.set($any($event.target).value)" />
+                    (input)="onSearchChange($any($event.target).value)" />
             </label>
 
             <!-- Expired toggle -->
             <label class="flex items-center gap-2 px-3 h-12 rounded-lg border border-base-300 bg-base-100 shrink-0">
                 <input type="checkbox" class="toggle toggle-primary toggle-sm"
-                    (change)="expiredOnly.set($any($event.target).checked)" />
+                    (change)="onExpiredFilterChange($any($event.target).checked)" />
                 <span class="text-sm font-medium">Expired only</span>
             </label>
 
@@ -52,8 +52,9 @@
 
         <!-- Table -->
         <div class="xl:col-span-2">
-            <app-members-list [members]="filteredMembers()" (selectMember)="onSelect($event)" (edit)="onEdit($event)"
-                (delete)="onDelete($event)">
+            <app-members-list [members]="members()" [currentPage]="currentPage()" [pageSize]="pageSize"
+                [totalCount]="totalCount()" (pageChange)="onPageChange($event)" (selectMember)="onSelect($event)"
+                (edit)="onEdit($event)" (delete)="onDelete($event)">
             </app-members-list>
 
         </div>
@@ -62,11 +63,11 @@
         <div class="bg-base-100 border rounded-xl p-5 shadow-sm">
             <h2 class="font-semibold mb-3">Member Details</h2>
 
-            <div *ngIf="!selectedMember" class="text-base-content/60">
+            <div *ngIf="!selectedMember()" class="text-base-content/60">
                 Select a member to view details
             </div>
 
-            <app-member-details *ngIf="selectedMember" [member]="selectedMember">
+            <app-member-details *ngIf="selectedMember()" [member]="selectedMember() || undefined">
             </app-member-details>
         </div>
 

@@ -1,87 +1,80 @@
-import { Injectable } from '@angular/core';
-import { Member } from '../models/member.model';
-import { Observable, of, from } from 'rxjs';
-import { delay, finalize } from 'rxjs/operators';
-import { LoadingService } from '../../../core/services/loading.service';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+
+export interface Member {
+    id: number;
+    name: string;
+    email: string;
+    membershipType: string;
+    expiryDate: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface PagedResult<T> {
+    items: T[];
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+}
+
+export interface CreateMemberDto {
+    name: string;
+    email: string;
+    membershipType: string;
+    expiryDate: string;
+}
+
+export interface UpdateMemberDto {
+    name?: string;
+    email?: string;
+    membershipType?: string;
+    expiryDate?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class MemberService {
+    private http = inject(HttpClient);
+    private baseUrl = `${environment.apiUrl}/members`;
 
-    constructor(private loading: LoadingService) { }
+    getMembers(
+        page: number = 1,
+        pageSize: number = 10,
+        search?: string,
+        expiredOnly: boolean = false,
+        sortBy: string = 'name',
+        sortDir: string = 'asc'
+    ): Observable<PagedResult<Member>> {
+        let params = new HttpParams()
+            .set('page', page.toString())
+            .set('pageSize', pageSize.toString())
+            .set('sortBy', sortBy)
+            .set('sortDir', sortDir)
+            .set('expiredOnly', expiredOnly.toString());
 
-    private members: Member[] = [
-        { id: 1, name: 'John Doe', email: 'john@mail.com', membershipType: 'Premium', expiryDate: '2026-03-01' },
-        { id: 2, name: 'Sara Smith', email: 'sara@mail.com', membershipType: 'Basic', expiryDate: '2024-01-01' },
-        { id: 3, name: 'Mike Ross', email: 'mike@mail.com', membershipType: 'Premium', expiryDate: '2025-12-10' }
-    ];
+        if (search) {
+            params = params.set('search', search);
+        }
 
-    getMembers(): Observable<Member[]> {
-        this.loading.show();
-
-        return of(this.members).pipe(
-            delay(200),
-            finalize(() => this.loading.hide())
-        );
+        return this.http.get<PagedResult<Member>>(this.baseUrl, { params });
     }
 
-    isEmailTaken(email: string): Observable<boolean> {
-        this.loading.show();
-
-        const takenEmails = ['john@mail.com', 'admin@mail.com'];
-
-        return from(
-            new Promise<boolean>(resolve => {
-                setTimeout(() => {
-                    resolve(takenEmails.includes(email.toLowerCase()));
-                }, 800);
-            })
-        ).pipe(
-            finalize(() => this.loading.hide())
-        );
+    getMemberById(id: number): Observable<Member> {
+        return this.http.get<Member>(`${this.baseUrl}/${id}`);
     }
 
-    getMemberById(id: number): Observable<Member | undefined> {
-        this.loading.show();
-
-        return of(this.members.find(m => m.id === id)).pipe(
-            delay(500),
-            finalize(() => this.loading.hide())
-        );
+    createMember(dto: CreateMemberDto): Observable<Member> {
+        return this.http.post<Member>(this.baseUrl, dto);
     }
 
-    createMember(member: Member): Observable<Member> {
-        this.loading.show();
-
-        const newMember = { ...member, id: Date.now() };
-        this.members = [...this.members, newMember];
-
-        return of(newMember).pipe(
-            delay(800),
-            finalize(() => this.loading.hide())
-        );
+    updateMember(id: number, dto: UpdateMemberDto): Observable<Member> {
+        return this.http.put<Member>(`${this.baseUrl}/${id}`, dto);
     }
 
-    updateMember(member: Member): Observable<Member> {
-        this.loading.show();
-
-        this.members = this.members.map(m =>
-            m.id === member.id ? { ...member } : m
-        );
-
-        return of(member).pipe(
-            delay(700),
-            finalize(() => this.loading.hide())
-        );
-    }
-
-    deleteMember(id: number): Observable<boolean> {
-        this.loading.show();
-
-        this.members = this.members.filter(m => m.id !== id);
-
-        return of(true).pipe(
-            delay(600),
-            finalize(() => this.loading.hide())
-        );
+    deleteMember(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/${id}`);
     }
 }
