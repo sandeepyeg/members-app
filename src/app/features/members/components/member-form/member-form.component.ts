@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { emailUniqueValidator, futureDateValidator } from '../validators/member.validators';
+import { futureDateValidator } from '../validators/member.validators';
 import { MemberService } from '../../services/member.service';
 import { share } from 'rxjs';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -21,14 +21,13 @@ export class MemberFormComponent implements OnInit {
 
   form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
-    email: ['', [Validators.required, Validators.email], [emailUniqueValidator(this.memberService)]],
+    email: ['', [Validators.required, Validators.email]],
     membershipType: ['Basic', Validators.required],
     expiryDate: ['', [Validators.required, futureDateValidator]]
   });
 
   constructor(
-    private fb: FormBuilder,
-    private memberService: MemberService
+    private fb: FormBuilder
   ) { }
 
   ngOnInit() {
@@ -41,7 +40,7 @@ export class MemberFormComponent implements OnInit {
     if (this.form.invalid) return;
 
     const value = {
-      ...this.member,  
+      ...this.member,
       ...this.form.value
     };
 

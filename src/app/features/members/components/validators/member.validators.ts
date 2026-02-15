@@ -1,6 +1,4 @@
-import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
-import { MemberService } from '../../services/member.service';
-import { firstValueFrom } from 'rxjs';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export function futureDateValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
@@ -9,15 +7,4 @@ export function futureDateValidator(control: AbstractControl): ValidationErrors 
     const today = new Date();
 
     return selected > today ? null : { pastDate: true };
-}
-export function emailUniqueValidator(service: MemberService): AsyncValidatorFn {
-    return async (control) => {
-        if (!control.value) return null;
-
-        const taken = await firstValueFrom(
-            service.isEmailTaken(control.value)
-        );
-
-        return taken ? { emailTaken: true } : null;
-    };
 }

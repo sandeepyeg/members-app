@@ -2,6 +2,8 @@ export interface Member {
     id: number;
     name: string;
     email: string;
-    membershipType: 'Basic' | 'Premium';
+    membershipType: string;
     expiryDate: string;
+    createdAt?: string;
+    updatedAt?: string;
 }

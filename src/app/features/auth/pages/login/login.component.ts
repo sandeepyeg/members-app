@@ -36,17 +36,17 @@ export class LoginComponent {
 
     const { email, password } = this.form.value;
 
-    setTimeout(() => {
-      const success = this.auth.login(email!, password!);
-
-      this.loading.set(false);
-
-      if (success) {
+    this.auth.login(email!, password!).subscribe({
+      next: (response) => {
+        this.loading.set(false);
         this.router.navigate(['/members']);
-      } else {
+      },
+      error: (error) => {
+        this.loading.set(false);
         this.loginFailed.set(true);
-        this.toast.show('Invalid email or password', 'error');
+        // Error interceptor will show toast, but we can add custom handling here if needed
+        console.error('Login failed:', error);
       }
-    }, 600); // simulate API latency
+    });
   }
 }
