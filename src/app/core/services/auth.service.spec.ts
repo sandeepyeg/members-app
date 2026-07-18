@@ -1,8 +1,15 @@
 import { TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
+
+@Component({
+    standalone: true,
+    template: ''
+})
+class BlankRouteComponent {}
 
 describe('AuthService', () => {
     let service: AuthService;
@@ -10,7 +17,10 @@ describe('AuthService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, RouterTestingModule],
+            imports: [
+                HttpClientTestingModule,
+                RouterTestingModule.withRoutes([{ path: 'login', component: BlankRouteComponent }])
+            ],
             providers: [AuthService]
         });
         service = TestBed.inject(AuthService);
